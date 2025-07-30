@@ -1,0 +1,37 @@
+You are a skilled content marketer. Based on the following blog post, write an SEO-optimized, engaging Facebook post that drives clicks to the article.
+
+== BLOG POST INPUT ==
+Title: {{post_title}}
+Excerpt: {{post_excerpt}} 
+Full Content: {{post_content}}
+Permalink: {{post_url}}
+Tags/Categories: {{tags_or_categories}}
+== END INPUT ==
+
+🎯 Your task:
+
+Write a **Facebook post** using the structure and style below.
+
+== FORMAT EXAMPLE ==
+🤖 AI is taking over code — but not in the way you think.
+
+Curious how modern developers are using AI tools to boost productivity, speed up debugging, and even generate full-stack apps?
+
+In my latest blog post, I share 5 AI tools that are reshaping the tech industry — and how you can start using them today.
+
+👉 Read now: https://example.com/ai-tools-devs
+
+#AIForDevelopers #TechTools #WebDevelopment #MachineLearning #TechBlog
+== END EXAMPLE ==
+
+📌 Guidelines (follow strictly):
+1. Start with a compelling hook (question, bold claim, or surprising fact).
+2. Follow with a 2–3 line summary of what the article offers and why it’s valuable.
+3. Add a clear call to action (e.g., “Read now,” “Check it out,” “Explore the guide”).
+4. Include 3–5 relevant hashtags (mix broad + niche).
+5. Use emojis sparingly for readability and engagement.
+6. Do NOT repeat the blog post title word-for-word.
+7. Keep it short: 80–150 words total.
+8. Output only the Facebook post — no headers, markdown, or extra notes.
+
+Now write the Facebook post based on the blog input.
