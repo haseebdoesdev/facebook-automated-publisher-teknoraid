@@ -86,4 +86,9 @@ The post should be exciting, encourage clicks, and include relevant hashtags.
     The server will start listening for requests on `http://127.0.0.1:500/`.
 
 2.  **Configure WordPress Webhook:**
-    In your WordPress admin panel (using a plugin like "WP Webhooks"), set up a new webhook to trigger on "Post Published". Point it to your server's public URL, e.g., `http://your-server-ip:500/webhook`.
+    In your WordPress admin panel (using a plugin like "WP Webhooks"), set up a new webhook to trigger on "Post Published". Point it to your server's public URL, e.g., `http://your-server-ip:500/webhook`, or use ngrok for local testing.
+
+    ```bash
+    ngrok http 500
+    ```
+    This will give you a public URL that you can use in your WordPress webhook settings.
