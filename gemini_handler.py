@@ -13,7 +13,7 @@ if not GEMINI_API_KEY:
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel('gemini-2.5-flash')
 
-def generate_fb_post_text_gemini(post_text: str) -> str:
+def generate_fb_post_text_gemini(prompt: str) -> str:
     """
     Generates text content using the Gemini model based on a given prompt.
     """
