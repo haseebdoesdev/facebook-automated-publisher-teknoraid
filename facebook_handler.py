@@ -7,7 +7,7 @@ load_dotenv()
 PAGE_ID = os.getenv("PAGE_ID")
 PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
 
-def create_fb_post(message: str):
+def create_fb_post(message: str,link:str):
     """
     Create a Facebook post with the given message.
     Returns (True, None) if successful, (False, error_message) otherwise.
@@ -17,7 +17,8 @@ def create_fb_post(message: str):
     url = f'https://graph.facebook.com/v23.0/{PAGE_ID}/feed'
     payload = {
         'message': message,
-        'access_token': PAGE_ACCESS_TOKEN
+        'access_token': PAGE_ACCESS_TOKEN,
+        'link' : link
     }
     try:
         response = requests.post(url, data=payload)

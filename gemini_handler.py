@@ -18,6 +18,7 @@ def generate_fb_post_text_gemini(prompt: str) -> str:
     Generates text content using the Gemini model based on a given prompt.
     """
     try:
+        print("🔍 Prompt for Gemini:", prompt)
         print("✨ Generating content with Gemini...")
         response = model.generate_content(prompt)
         print("✅ Content generated successfully.")
