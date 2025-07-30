@@ -13,7 +13,7 @@ if not GEMINI_API_KEY:
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel('gemini-2.5-flash')
 
-def generate_text_from_prompt(post_text: str) -> str:
+def generate_fb_post_text_gemini(post_text: str) -> str:
     """
     Generates text content using the Gemini model based on a given prompt.
     """
@@ -31,6 +31,6 @@ if __name__ == '__main__':
     prompt = "Write a short, exciting Facebook post about the launch of a new AI assistant that can code."
 
     # 2. Generate the post content using Gemini
-    generated_post_message = generate_text_from_prompt(prompt)
+    generated_post_message = generate_fb_post_text_gemini(prompt)
 
     print("Generated Post Message:", generated_post_message)
