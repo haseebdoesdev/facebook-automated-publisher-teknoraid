@@ -4,6 +4,7 @@ from gemini_handler import generate_fb_post_text_gemini,craft_a_text_message
 from facebook_handler import create_fb_post, send_message
 from messages_db_handler import *
 from messages_handler import handle_message
+from comment_handler import *
 from util import *
 import os
 import json
@@ -71,7 +72,7 @@ def messaging():
         if is_messaging_notification(data):
             handle_message(data)
         if is_comment_on_a_post(data):
-            handle_message(data)
+            handle_comment(data)
         return "OK", 200
     
     

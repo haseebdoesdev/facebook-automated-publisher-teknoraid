@@ -28,4 +28,19 @@ def is_comment_on_a_post(webhook_data):
     """
     if not isinstance(webhook_data, dict):
         return False
-    
+    if webhook_data.get('object') != 'page':
+        return False
+
+    try:
+        # A comment notification comes through the 'feed' field.
+        # We need to check the 'value' object for item: 'comment'.
+        for entry in webhook_data.get('entry', []):
+            for change in entry.get('changes', []):
+                if change.get('field') == 'feed':
+                    value = change.get('value', {})
+                    if value and value.get('item') == 'comment':
+                        return True
+    except (TypeError, AttributeError):
+        return False
+
+    return False

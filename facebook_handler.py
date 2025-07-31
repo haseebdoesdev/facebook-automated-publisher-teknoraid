@@ -50,7 +50,30 @@ def send_typing_action(recipient_id):
         'sender_action': 'typing_on'
     }
     requests.post(url, json=payload, headers=headers)
+
+def reply_to_comment(comment_id: str, message: str):
+    """
+    Replies to a specific comment on Facebook.
+    """
+    if not PAGE_ACCESS_TOKEN:
+        raise ValueError("PAGE_ACCESS_TOKEN is not set in environment.")
+    
+    url = f'https://graph.facebook.com/v23.0/{comment_id}/comments'
+    payload = {
+        'message': message,
+        'access_token': PAGE_ACCESS_TOKEN
+    }
+    try:
+        response = requests.post(url, data=payload)
+        response.raise_for_status() # Raise an exception for bad status codes
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error replying to comment {comment_id}: {e}")
+        print(f"Response: {e.response.text if e.response else 'No response'}")
+        return None
 if __name__ == '__main__':
+
+
     # Example usage
     message = "Hello, this is a test post from my Python script!"
     success, error = create_fb_post(message)
