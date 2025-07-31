@@ -27,6 +27,18 @@ def generate_fb_post_text_gemini(prompt: str) -> str:
         print(f"❌ Error generating content with Gemini: {e}")
         return ""
 
+def craft_a_text_message(prompt: str) -> str:
+    """
+    Crafts a text message using the Gemini model based on a given prompt.
+    """
+    try:
+        print("🔍 Crafting text message with Gemini...")
+        response = model.generate_content(prompt)
+        print("✅ Text message crafted successfully.")
+        return response.text
+    except Exception as e:
+        print(f"❌ Error crafting text message: {e}")
+        return ""
 if __name__ == '__main__':
     # 1. Define a prompt for Gemini
     prompt = "Write a short, exciting Facebook post about the launch of a new AI assistant that can code."

@@ -30,6 +30,17 @@ def create_fb_post(message: str,link:str):
     except Exception as e:
         return False, str(e)
 
+
+def send_message(recipient_id, message_text):
+    url = f"https://graph.facebook.com/v21.0/me/messages?access_token={PAGE_ACCESS_TOKEN}"
+    headers = {"Content-Type": "application/json"}
+    payload = {
+        "recipient": {"id": recipient_id},
+        "message": {"text": message_text}
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    return response.json()
+
 if __name__ == '__main__':
     # Example usage
     message = "Hello, this is a test post from my Python script!"

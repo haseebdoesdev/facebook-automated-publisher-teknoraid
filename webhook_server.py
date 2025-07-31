@@ -1,14 +1,23 @@
+import dotenv
 from flask import Flask, request, jsonify
-from gemini_handler import generate_fb_post_text_gemini
-from facebook_handler import create_fb_post
-from util import to_url_slug
+from gemini_handler import generate_fb_post_text_gemini,craft_a_text_message
+from facebook_handler import create_fb_post, send_message
+from messages_db_handler import *
+from messages_handler import handle_message
+from util import *
 import os
-
+import json
+from datetime import datetime
+from dotenv import load_dotenv
+dotenv.load_dotenv()
+PAGE_ID = os.getenv("PAGE_ID")
 app = Flask(__name__)
 
 with open('prompt.txt', 'r', encoding="utf-8") as f:
     PROMPT_TEMPLATE = f.read()
 
+with open('messaging_prompt.txt', 'r', encoding="utf-8") as f:
+    MESSAGING_PROMPT_TEMPLATE = f.read()
 def extract_post_info(post_data):
     post = post_data.get('post', {})
     taxonomies = post_data.get('taxonomies', {})
@@ -39,6 +48,32 @@ def webhook():
         print(f"❌ Failed to create Facebook post: {error}")
 
     return jsonify({'status': 'received', 'extracted': extracted}), 200
+VERIFY_TOKEN = 'czxcxvxvxcvxcvxcvzsdsdf3ewqerqwr'
 
+@app.route('/messaging', methods=['GET', 'POST'])
+def messaging():
+    if request.method == 'GET':
+        # Facebook webhook verification
+        mode = request.args.get('hub.mode')
+        token = request.args.get('hub.verify_token')
+        challenge = request.args.get('hub.challenge')
+
+        if mode == 'subscribe' and token == VERIFY_TOKEN:
+            print('Webhook verified successfully.')
+            return challenge, 200
+        else:
+            return 'Verification failed', 403
+
+    elif request.method == 'POST':
+        # Handle incoming messages
+        data = request.get_json()
+        print("Received webhook:", data)
+        if is_messaging_notification(data):
+            handle_message(data)
+        if is_comment_on_a_post(data):
+            handle_message(data)
+        return "OK", 200
+    
+    
 if __name__ == '__main__':
     app.run(port=500)
