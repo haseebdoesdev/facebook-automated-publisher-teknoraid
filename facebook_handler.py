@@ -41,6 +41,15 @@ def send_message(recipient_id, message_text):
     response = requests.post(url, json=payload, headers=headers)
     return response.json()
 
+def send_typing_action(recipient_id):
+    url = f'https://graph.facebook.com/v21.0/me/messages?access_token={PAGE_ACCESS_TOKEN}'
+    headers = {"Content-Type": "application/json"}
+
+    payload = {
+        'recipient': {'id': recipient_id},
+        'sender_action': 'typing_on'
+    }
+    requests.post(url, json=payload, headers=headers)
 if __name__ == '__main__':
     # Example usage
     message = "Hello, this is a test post from my Python script!"

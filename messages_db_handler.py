@@ -156,7 +156,7 @@ def build_llm_context(conversation_id: str, limit: int = 10) -> list:
     
 complaints_col = db["complaints"]
 
-def create_complaint(conversation_id: str, user_id: str, message_ids: list, full_text: str, summary: str, duplicate_of=None):
+def create_complaint(conversation_id: str, user_id: str, full_text: str, summary: str, duplicate_of=None):
     complaint_doc = {
         "conversation_id": conversation_id,
         "user_id": user_id,
@@ -167,7 +167,6 @@ def create_complaint(conversation_id: str, user_id: str, message_ids: list, full
         "created_at": datetime.utcnow().isoformat(),
         "updated_at": datetime.utcnow().isoformat(),
         "spam_flag": False,
-        "source_message_ids": message_ids,
         "escalation_channel": "email",
         "escalated_to": None,
         "internal_notes": ""
