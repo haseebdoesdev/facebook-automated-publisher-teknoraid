@@ -78,7 +78,6 @@ the user comment is:
   "is_escalation_needed": true or false,
   "complaint_summary": "string or null",
   "escalation_type": "string or null",
-  "reaction": "like" or "love" or null,
   "action": "allow" or "hide"
 }}
 ```

@@ -1,11 +1,11 @@
 import dotenv
 from flask import Flask, request, jsonify
 from gemini_handler import generate_fb_post_text_gemini,craft_a_text_message
-from facebook_handler import create_fb_post, send_message
-from messages_db_handler import *
-from messages_handler import handle_message
-from comment_handler import *
-from util import *
+from facebook.feed_handler import create_fb_post, send_message
+from facebook.messages_db_handler import *
+from facebook.messages_handler import handle_message
+from facebook.comment_handler import *
+from facebook.util import *
 import os
 import json
 from datetime import datetime

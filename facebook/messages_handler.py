@@ -1,21 +1,44 @@
 
 from messages_db_handler import *
 from datetime import datetime
-from facebook_handler import send_message, send_typing_action
+from facebook.feed_handler import send_message, send_typing_action
 from gemini_handler import craft_a_text_message
 import json
 from dotenv import load_dotenv
 import os
-
+import requests
 # Load environment variables from the .env file in the project root
 load_dotenv()
 # Get the Facebook Page ID from environment variables
 PAGE_ID = os.getenv("PAGE_ID")
+PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
 
 # Open and read the messaging prompt template from a file.
 # This template will be used to construct the prompt for the Gemini AI.
 with open('messaging_prompt.txt', 'r', encoding="utf-8") as f:
     MESSAGING_PROMPT_TEMPLATE = f.read()
+
+
+def send_typing_action(recipient_id):
+    url = f'https://graph.facebook.com/v21.0/me/messages?access_token={PAGE_ACCESS_TOKEN}'
+    headers = {"Content-Type": "application/json"}
+
+    payload = {
+        'recipient': {'id': recipient_id},
+        'sender_action': 'typing_on'
+    }
+    requests.post(url, json=payload, headers=headers)
+
+def send_message(recipient_id, message_text):
+    url = f"https://graph.facebook.com/v21.0/me/messages?access_token={PAGE_ACCESS_TOKEN}"
+    headers = {"Content-Type": "application/json"}
+    payload = {
+        "recipient": {"id": recipient_id},
+        "message": {"text": message_text}
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    return response.json()
+
 
 def handle_message(data):
     """

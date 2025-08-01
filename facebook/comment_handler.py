@@ -3,7 +3,7 @@ import json
 import os
 from dotenv import load_dotenv
 import requests
-from facebook_handler import reply_to_comment
+from facebook.feed_handler import reply_to_comment
 from gemini_handler import craft_a_text_message
 
 
@@ -14,39 +14,6 @@ PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
 # A separate prompt for comments allows for different instructions than private messages.
 with open('comment_handler_prompt.txt', 'r', encoding="utf-8") as f:
     COMMENT_PROMPT_TEMPLATE = f.read()
-
-
-def react_to_comment(page_access_token: str, comment_id: str, reaction_type: str):
-    """
-    Reacts to a Facebook comment with 'LIKE' or 'LOVE'.
-
-    Parameters:
-        page_access_token (str): The access token for the Facebook page.
-        comment_id (str): The ID of the comment to react to.
-        reaction_type (str): Either 'Like' or 'Love'. (Case-insensitive)
-    """
-    valid_reactions = {
-        "like": "LIKE",
-        "love": "LOVE"
-    }
-
-    reaction = valid_reactions.get(reaction_type.lower())
-    if not reaction:
-        raise ValueError("Invalid reaction type. Use 'Like' or 'Love'.")
-
-    url = f"https://graph.facebook.com/v23.0/{comment_id}/reactions"
-    payload = {
-        "type": reaction,
-        "access_token": page_access_token
-    }
-
-    response = requests.post(url, data=payload)
-
-    if response.status_code == 200:
-        print(f"✅ Reacted to comment {comment_id} with '{reaction}'.")
-    else:
-        print(f"❌ Failed to react. Status Code: {response.status_code}")
-        print("Response:", response.json())
 
 
 
@@ -98,9 +65,7 @@ def handle_comment(data):
         is_escalation_needed = response_json.get('is_escalation_needed')
         escalation_type = response_json.get('escalation_type')
         complaint_summary = response_json.get('complaint_summary')
-        reaction = response_json.get('reaction')
-        if reaction:
-            react_to_comment(PAGE_ACCESS_TOKEN,comment_id,reaction)
+
         # --- 6. Reply if needed ---
         if action in ['reply', 'allow'] and reply_text:
             response_data = reply_to_comment(comment_id, reply_text)
@@ -116,3 +81,24 @@ def handle_comment(data):
 
     except Exception as e:
         print(f"Error handling comment: {e}")
+
+def reply_to_comment(comment_id: str, message: str):
+    """
+    Replies to a specific comment on Facebook.
+    """
+    if not PAGE_ACCESS_TOKEN:
+        raise ValueError("PAGE_ACCESS_TOKEN is not set in environment.")
+    
+    url = f'https://graph.facebook.com/v23.0/{comment_id}/comments'
+    payload = {
+        'message': message,
+        'access_token': PAGE_ACCESS_TOKEN
+    }
+    try:
+        response = requests.post(url, data=payload)
+        response.raise_for_status() # Raise an exception for bad status codes
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error replying to comment {comment_id}: {e}")
+        print(f"Response: {e.response.text if e.response else 'No response'}")
+        return None
