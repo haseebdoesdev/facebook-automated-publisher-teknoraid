@@ -18,10 +18,7 @@ Your job is to analyze a Facebook comment and provide a JSON response based on t
    20% of the time with: `"You just made our day — appreciate you!"`
    20% of the time with: `"Glad you enjoyed it! Looking forward to seeing you again."`
 
- Add:
 
-   `"like"` reaction if it’s a normal positive comment.
-   `"love"` reaction if it’s a strongly appreciative or highly positive comment.
 
 #### 2. Complaints
 

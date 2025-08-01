@@ -6,6 +6,7 @@ from facebook.messages_db_handler import *
 from facebook.messages_handler import handle_message
 from facebook.comment_handler import *
 from facebook.util import *
+from teknoraid_wordpress.main import *
 import os
 import json
 from datetime import datetime
@@ -14,44 +15,27 @@ dotenv.load_dotenv()
 PAGE_ID = os.getenv("PAGE_ID")
 app = Flask(__name__)
 
+VERIFY_TOKEN = 'czxcxvxvxcvxcvxcvzsdsdf3ewqerqwr'
+
+
 with open('prompt.txt', 'r', encoding="utf-8") as f:
     PROMPT_TEMPLATE = f.read()
 
 with open('messaging_prompt.txt', 'r', encoding="utf-8") as f:
     MESSAGING_PROMPT_TEMPLATE = f.read()
-def extract_post_info(post_data):
-    post = post_data.get('post', {})
-    taxonomies = post_data.get('taxonomies', {})
-    categories = taxonomies.get('category', {}) if isinstance(taxonomies, dict) else {}
-    tags_or_categories = [cat.get('name') for cat in categories.values()] if isinstance(categories, dict) else []
-    return {
-        'post_title': post.get('post_title', ''),
-        'post_excerpt': post.get('post_excerpt', ''),
-        'post_content': post.get('post_content', ''),
-        'post_url': 'https://teknoraid.com/' + to_url_slug(post.get('post_title', '')),
-        'tags_or_categories': tags_or_categories
-    }
 
-@app.route('/webhook', methods=['POST'])
+@app.route('/teknoriad_webhook', methods=['POST'])
 def webhook():
     post_data = request.json
-    print("📩 New post received:")
-    print(post_data)
-    extracted = extract_post_info(post_data)
-    PROMPT_TEMPLATE_FILLED = PROMPT_TEMPLATE.format(**extracted)
-    print("Extracted post info:", extracted)
-    generated_post_message = generate_fb_post_text_gemini(PROMPT_TEMPLATE_FILLED)
-    print("Generated Facebook post message:", generated_post_message)
-    success, error = create_fb_post(generated_post_message, extracted['post_url'])
-    if success:
-        print("✅ Facebook post created successfully!")
-    else:
-        print(f"❌ Failed to create Facebook post: {error}")
-
+    extracted , success, error = handle_teknoraid_post(post_data)
+    if not success:
+        return jsonify({'status': 'error', 'error': error}), 500
     return jsonify({'status': 'received', 'extracted': extracted}), 200
-VERIFY_TOKEN = 'czxcxvxvxcvxcvxcvzsdsdf3ewqerqwr'
 
-@app.route('/messaging', methods=['GET', 'POST'])
+
+
+
+@app.route('/fb_webhook', methods=['GET', 'POST'])
 def messaging():
     if request.method == 'GET':
         # Facebook webhook verification
