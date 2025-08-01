@@ -1,7 +1,7 @@
 import dotenv
 from flask import Flask, request, jsonify
 from gemini_handler import generate_fb_post_text_gemini,craft_a_text_message
-from facebook.feed_handler import create_fb_post, send_message
+from facebook.feed_handler import create_fb_post
 from facebook.messages_db_handler import *
 from facebook.messages_handler import handle_message
 from facebook.comment_handler import *

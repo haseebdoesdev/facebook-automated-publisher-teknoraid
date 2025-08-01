@@ -1,7 +1,6 @@
 
-from messages_db_handler import *
+from facebook.messages_db_handler import *
 from datetime import datetime
-from facebook.feed_handler import send_message, send_typing_action
 from gemini_handler import craft_a_text_message
 import json
 from dotenv import load_dotenv

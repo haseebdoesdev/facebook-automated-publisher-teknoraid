@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 from facebook.feed_handler import create_fb_post
-from util import *
+from teknoraid_wordpress.util import *
 from gemini_handler import generate_fb_post_text_gemini
 load_dotenv()
 

@@ -7,28 +7,81 @@ load_dotenv()
 PAGE_ID = os.getenv("PAGE_ID")
 PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
 
-def create_fb_post(message: str,link:str):
+import os
+import mimetypes
+import requests
+
+def create_fb_post(message: str, link: str = None, media_paths: list = None):
     """
-    Create a Facebook post with the given message.
-    Returns (True, None) if successful, (False, error_message) otherwise.
+    Create a Facebook post for a Page with text, optional link, and optional media (images/videos).
+    
+    Args:
+        message (str): The post message.
+        link (str): Optional link to attach.
+        media_paths (list): Optional list of local file paths to images or videos.
+
+    Returns:
+        (bool, str): (True, None) on success, (False, error_message) on failure.
     """
     if not PAGE_ID or not PAGE_ACCESS_TOKEN:
         return False, "PAGE_ID or PAGE_ACCESS_TOKEN is not set in environment."
-    url = f'https://graph.facebook.com/v23.0/{PAGE_ID}/feed'
-    payload = {
-        'message': message,
-        'access_token': PAGE_ACCESS_TOKEN,
-        'link' : link
-    }
+
+    base_url = f"https://graph.facebook.com/v23.0/{PAGE_ID}"
+    media_ids = []
+
     try:
-        response = requests.post(url, data=payload)
+        # Upload media first (if any)
+        if media_paths:
+            for path in media_paths:
+                mime_type, _ = mimetypes.guess_type(path)
+                if not mime_type:
+                    return False, f"Could not determine MIME type of: {path}"
+
+                if mime_type.startswith("image"):
+                    media_upload_url = f"{base_url}/photos"
+                elif mime_type.startswith("video"):
+                    media_upload_url = f"{base_url}/videos"
+                else:
+                    return False, f"Unsupported media type: {mime_type}"
+
+                with open(path, 'rb') as file_data:
+                    files = {'source': file_data}
+                    payload = {
+                        'published': 'false',  # Upload only, don't post yet
+                        'access_token': PAGE_ACCESS_TOKEN
+                    }
+                    response = requests.post(media_upload_url, data=payload, files=files)
+                    if response.status_code == 200:
+                        media_id = response.json().get('id')
+                        if media_id:
+                            media_ids.append({'media_fbid': media_id})
+                    else:
+                        return False, f"Media upload failed: {response.text}"
+
+        # Create final post
+        post_url = f"{base_url}/feed"
+        post_payload = {
+            'message': message,
+            'access_token': PAGE_ACCESS_TOKEN
+        }
+
+        if link:
+            post_payload['link'] = link
+
+        # If media is uploaded, use attached_media
+        if media_ids:
+            for i, media in enumerate(media_ids):
+                post_payload[f'attached_media[{i}]'] = str(media)
+
+        response = requests.post(post_url, data=post_payload)
         if response.status_code == 200:
             return True, None
         else:
-            error_msg = f"Status Code: {response.status_code}, Response: {response.text}"
-            return False, error_msg
+            return False, f"Post creation failed: {response.text}"
+
     except Exception as e:
         return False, str(e)
+
 
 
 def create_video_story(page_id, access_token, video_path=None, video_url=None):

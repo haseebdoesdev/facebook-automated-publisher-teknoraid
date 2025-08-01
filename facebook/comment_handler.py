@@ -3,7 +3,6 @@ import json
 import os
 from dotenv import load_dotenv
 import requests
-from facebook.feed_handler import reply_to_comment
 from gemini_handler import craft_a_text_message
 
 
@@ -12,7 +11,7 @@ PAGE_ID = os.getenv("PAGE_ID")
 PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
 
 # A separate prompt for comments allows for different instructions than private messages.
-with open('comment_handler_prompt.txt', 'r', encoding="utf-8") as f:
+with open(r'facebook\comment_handler_prompt.txt', 'r', encoding="utf-8") as f:
     COMMENT_PROMPT_TEMPLATE = f.read()
 
 
